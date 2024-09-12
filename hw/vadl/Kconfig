@@ -1,0 +1,6 @@
+config VADL_VIRT_MCU
+    bool
+
+config VADL_VIRT
+    bool
+    select VADL_VIRT_MCU

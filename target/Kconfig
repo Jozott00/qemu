@@ -17,4 +17,5 @@ source s390x/Kconfig
 source sh4/Kconfig
 source sparc/Kconfig
 source tricore/Kconfig
+source vadl/Kconfig
 source xtensa/Kconfig

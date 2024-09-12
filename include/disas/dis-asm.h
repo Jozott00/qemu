@@ -250,6 +250,8 @@ enum bfd_architecture
 #define bfd_mach_rx_v2         0x76
 #define bfd_mach_rx_v3         0x77
   bfd_arch_loongarch,
+  bfd_arch_vadl,
+#define bfs_mach_vadlvirt      0x420
   bfd_arch_last
   };
 #define bfd_mach_s390_31 31
