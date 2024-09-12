@@ -30,6 +30,7 @@ static void virt_machine_init(MachineState *machine)
     MemoryRegion *system_memory = get_system_memory();
     qemu_printf("[VADL] sys mem size: %x\n", system_memory->size);
 
+    // add the ram region
     memory_region_add_subregion(system_memory, memmap[VIRT_DRAM].base, machine->ram);
 
     s->machine_ready.notify = virt_machine_ready;
