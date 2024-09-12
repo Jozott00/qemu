@@ -2,6 +2,7 @@
 /build/
 /.cache/
 /.vscode/
+/.idea/
 *.pyc
 .sdk
 .stgit-*
