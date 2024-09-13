@@ -20,6 +20,7 @@
 //There are also 256 system registers.
 #define VADL_SYS_REG 256
 
+// TODO: REMOVE
 struct VADLCPUDef {
     const char* name;
     size_t clock_speed;

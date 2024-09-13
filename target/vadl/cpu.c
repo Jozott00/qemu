@@ -18,6 +18,7 @@ static void vadl_cpu_disas_set_info(CPUState *cpu, disassemble_info *info)
 // An init function for the CPU
 static void vadl_cpu_init(Object *obj)
 {
+    qemu_printf("[VADL] vadl_cpu_init\n");
     CPUState *cs = CPU(obj);
     VADLCPU *cpu = VADL_CPU(obj);
     CPUVADLState *env = &cpu->env;
@@ -26,6 +27,7 @@ static void vadl_cpu_init(Object *obj)
 // Realice function that sets up the CPU
 static void vadl_cpu_realizefn(DeviceState *dev, Error **errp)
 {
+    qemu_printf("[VADL] vadl_cpu_realizefn\n");
     CPUState *cs = CPU(dev);
     cpu_self = VADL_CPU(cs);
     VADLCPUClass* vcc = VADL_CPU_GET_CLASS(dev);
@@ -46,6 +48,7 @@ static void vadl_cpu_realizefn(DeviceState *dev, Error **errp)
 // defined in the instruction set manual.
 static void vadl_cpu_reset(DeviceState *dev)
 {
+    qemu_printf("[VADL] vadl_cpu_reset\n");
     CPUState *cs = CPU(dev);
     VADLCPU *cpu = VADL_CPU(dev);
     VADLCPUClass *vcc = VADL_CPU_GET_CLASS(dev);
@@ -86,22 +89,28 @@ static void vadl_cpu_reset(DeviceState *dev)
 
 static ObjectClass* vadl_cpu_class_by_name(const char *cpu_model)
 {
+    qemu_printf("[VADL] vadl_cpu_class_by_name\n");
     return object_class_by_name(cpu_model);
 }
 
 static bool vadl_cpu_has_work(CPUState *cs)
 {
+    qemu_printf("[VADL] vadl_cpu_has_work\n");
     // TODO: Could be true (RISCV)
-    VADLCPU *cpu = VADL_CPU(cs);
-    CPUVADLState *env = &cpu->env;
-    return (cs->interrupt_request & CPU_INTERRUPT_HARD)
-        && cpu_interrupts_enabled(env);
+    return true;
+}
+
+static int vadl_cpu_mmu_index(CPUState *cs, bool ifetch) {
+    qemu_printf("[VADL] vadl_cpu_mmu_index\n");
+    // TODO: What should we do here?
+    return 0;
 }
 
 //When using the '-d cpu' paramater, QEMU executes this function after every translation block
 //to give us the CPU state at the begining of the block.
 static void vadl_cpu_dump_state(CPUState *cs, FILE *f, int flags)
 {
+    qemu_printf("[VADL] vadl_cpu_dump_state\n");
     VADLCPU *cpu = VADL_CPU(cs);
     //The CPU environment is used to access the content of the emulated registers.
     CPUVADLState *env = &cpu->env;
@@ -132,28 +141,32 @@ static void vadl_cpu_set_pc(CPUState *cs, vaddr value)
 
 void vadl_cpu_do_interrupt(CPUState *cpu)
 {
-    qemu_printf("[VADL] vadl_do_interrupt");
+    qemu_printf("[VADL] vadl_do_interrupt\n");
 }
 
 hwaddr vadl_cpu_get_phys_page_debug(CPUState *cs, vaddr addr)
 {
+    qemu_printf("[VADL] vadl_cpu_get_phys_page_debug\n");
     return addr; /* I assume 1:1 address correspondence */
 }
 
 int vadl_cpu_memory_rw_debug(CPUState *cs, vaddr addr, uint8_t *buf, int len, bool is_write)
 {
+    qemu_printf("[VADL] vadl_cpu_memory_rw_debug\n");
     // TODO: Later
     return -1;
 }
 
 static bool vadl_cpu_exec_interrupt(CPUState *cs, int interrupt_request)
 {
+    qemu_printf("[VADL] vadl_cpu_exec_interrupt\n");
     // TODO: Later
     return false;
 }
 
 void vadl_tcg_init(void)
 {
+    qemu_printf("[VADL] vadl_tcg_init\n");
     // TODO: Later
 }
 
@@ -161,6 +174,7 @@ bool vadl_cpu_tlb_fill(CPUState *cs, vaddr address, int size,
                        MMUAccessType access_type, int mmu_idx,
                        bool probe, uintptr_t retaddr)
 {
+    qemu_printf("[VADL] vadl_cpu_tlb\n");
     // TODO: Later
     return false;
 }
@@ -185,13 +199,14 @@ static const struct TCGCPUOps vadl_tcg_ops = {
 
 void vadl_cpu_synchronize_from_tb(CPUState *cs, const TranslationBlock *tb)
 {
+    qemu_printf("[VADL] vadl_cpu_synchronize_from_tb\n");
     VADLCPU *cpu = VADL_CPU(cs);
     cpu->env.r[VADL_PC_REG] = tb->pc;
 }
 
 static void vadl_cpu_class_init(ObjectClass *oc, void *data)
 {
-    printf("CPU-INIT!\n");
+    qemu_printf("[VADL] vadl_cpu_class_init\n");
     VADLCPUClass *vcc = VADL_CPU_CLASS(oc);
     CPUClass *cc = CPU_CLASS(oc);
     DeviceClass *dc = DEVICE_CLASS(oc);
@@ -202,6 +217,7 @@ static void vadl_cpu_class_init(ObjectClass *oc, void *data)
     cc->class_by_name = vadl_cpu_class_by_name;
 
     cc->has_work = vadl_cpu_has_work;
+    cc->mmu_index = vadl_cpu_mmu_index;
     cc->dump_state = vadl_cpu_dump_state;
     cc->set_pc = vadl_cpu_set_pc;
     cc->memory_rw_debug = vadl_cpu_memory_rw_debug;
@@ -221,6 +237,7 @@ static const VADLCPUDef vadl_cpu_defs[] = {
 
 static void vadl_cpu_cpudef_class_init(ObjectClass *oc, void *data)
 {
+    qemu_printf("[VADL] vadl_cpu_cpudef_class_init\n");
     VADLCPUClass *vcc = VADL_CPU_CLASS(oc);
     vcc->cpu_def = data;
 }
@@ -249,7 +266,6 @@ static const TypeInfo vadl_cpu_arch_types[] = {
         .parent = TYPE_CPU,
         .instance_size = sizeof(VADLCPU),
         .instance_init = vadl_cpu_init,
-        .abstract = true,
         .class_size = sizeof(VADLCPUClass),
         .class_init = vadl_cpu_class_init,
     }

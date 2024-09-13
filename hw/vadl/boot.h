@@ -2,9 +2,13 @@
 #define HW_VADL_BOOT_H
 
 #include "hw/boards.h"
+#include "hw/loader.h"
 
 
-bool vadl_load_firmware(ArchCPU *cpu, MachineState *ms,
-                        MemoryRegion *mr, const char *filename);
+target_ulong vadl_find_and_load_firmware(MachineState *ms, hwaddr firmware_load_addr, symbol_fn_t symbol_fn);
+
+target_ulong vadl_load_firmware(const char *firmware_filename,
+                                 hwaddr firmware_load_addr,
+                                 symbol_fn_t symbol_fn);
 
 #endif // HW_VADL_BOOT_H
